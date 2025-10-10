@@ -1,0 +1,29 @@
+[
+    {
+        "name": "SeLoger",
+        "url": "https://www.seloger.com/",
+        "ad_url_getter": "//a[@class='css-w5uu0r']",
+        "ad_price_getter": "//div[@class='css-1kfguso']",
+        "ad_keyfacts_getter": "//div[@class='css-9u48bm']",
+        "ad_location_getter": "//div[@class='css-oaskuq']",
+        "ad_img_getter": "//img[@class='css-1td0xc2']"
+    },
+    {
+        "name": "PAP",
+        "url": "https://www.pap.fr/annonce/",
+        "ad_url_getter": "//a[@class='item-thumb-link']",
+        "ad_price_getter": "//span[@class='item-price' or @class='item-price txt-purple']",
+        "ad_keyfacts_getter": "//ul[@class='item-tags']",
+        "ad_location_getter": "//span[@class='h1']",
+        "ad_img_getter": "//div[@class='owl-item cloned']/div/img"
+    },
+    {
+        "name": "Bien'ici",
+        "url": "https://www.bienici.com/",
+        "ad_url_getter": "a.detailedSheetLink",
+        "ad_price_getter": "span.ad-price__the-price",
+        "ad_keyfacts_getter": "h3.ad-overview-details__title",
+        "ad_location_getter": "span.ad-overview-details__address-title",
+        "ad_img_getter": "img.img__image"
+    }
+]

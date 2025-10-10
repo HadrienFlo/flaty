@@ -1,0 +1,112 @@
+{
+    "seloger_ad": {
+        "ad_container": {
+            "tag": "div",
+            "attribute": "id",
+            "value": "classified-card-"
+        },
+        "a": [
+            {
+                "url": {
+                    "attribute": "data-testid",
+                    "value": "card-mfe-covering-link-testid",
+                    "getter": "href"
+                }
+            }
+        ],
+        "div": [
+            {
+                "price": {
+                    "attribute": "data-testid",
+                    "value": "cardmfe-price-testid",
+                    "getter": "text"
+                }
+            },
+            {
+                "keyfacts": {
+                    "attribute": "data-testid",
+                    "value": "cardmfe-keyfacts-testid",
+                    "children": [
+                        {
+                            "tag": "div",
+                            "attribute": "class",
+                            "value": "css-1s6bx9e",
+                            "getter": "text"
+                        }
+                    ]
+                }
+            },
+            {
+                "location": {
+                    "attribute": "data-testid",
+                    "value": "cardmfe-description-box-address",
+                    "getter": "text"
+                }
+            }
+        ],
+        "img": [
+            {
+                "image": {
+                    "attribute": "class",
+                    "value": "css-1td0xc2",
+                    "getter": "src"
+                }
+            }
+        ]
+    },
+    "pap_ad": {
+        "ad_container": {
+            "tag": "div",
+            "attribute": "class",
+            "value": "search-list-item-alt"
+        },
+        "a": [
+            {
+                "url": {
+                    "attribute": "class",
+                    "value": "item-thumb-link",
+                    "getter": "href"
+                }
+            }
+        ],
+        "span": [
+            {
+                "price": {
+                    "attribute": "class",
+                    "value": "item-price",
+                    "getter": "text"
+                }
+            },
+            {
+                "location": {
+                    "attribute": "class",
+                    "value": "h1",
+                    "getter": "text"
+                }
+            }
+        ],
+        "ul": [
+            {
+                "keyfacts": {
+                    "attribute": "class",
+                    "value": "item-tags",
+                    "children": [
+                        {
+                            "tag": "li",
+                            "getter": "text"
+                        }
+                    ]
+                }
+            }
+        ],
+        "img": [
+            {
+                "image": {
+                    "attribute": "class",
+                    "value": "",
+                    "getter": "src"
+                }
+            }
+        ]
+    }
+}
