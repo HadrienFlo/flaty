@@ -3,6 +3,19 @@ from dash import Dash, Input, Output, State, callback, clientside_callback, ALL,
 from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 
+import logging
+from pathlib import Path
+
+from src.utils.logger import setup_logger
+
+# Configuration du logger principal
+log_path = Path("logs")
+log_path.mkdir(exist_ok=True)
+app_logger = setup_logger(
+    name="flaty",
+    log_file="flaty.log",
+    level=logging.INFO
+)
 
 dash._dash_renderer._set_react_version("18.2.0")
 

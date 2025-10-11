@@ -11,6 +11,11 @@ from typing import Optional, Callable
 def setup_logger(name: str, log_file: Optional[str] = None, level=logging.INFO) -> logging.Logger:
     """Configure et retourne un logger personnalisé."""
     logger = logging.getLogger(name)
+    
+    # Éviter les handlers en double
+    if logger.hasHandlers():
+        logger.handlers.clear()
+    
     logger.setLevel(level)
 
     # Formatter
@@ -31,6 +36,9 @@ def setup_logger(name: str, log_file: Optional[str] = None, level=logging.INFO) 
         file_handler = logging.FileHandler(log_path / log_file)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
+        
+    # Éviter la propagation aux loggers parents
+    logger.propagate = False
 
     return logger
 

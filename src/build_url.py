@@ -1,5 +1,6 @@
 from src.constants import SELOGER_PARIS_CODES
-from src.utils import get_pap_geo_code
+from src.extensions import get_pap_geo_code
+from src.utils.logger import log_function
 
 
 def leboncoin_url(city, max_rent, furnished, minimum_area, minimum_rooms):
@@ -49,6 +50,7 @@ def pap_url(city, max_rent, minimum_area, minimum_rooms):
         url += f"-a-partir-de-{minimum_area}-m2"
     return url
 
+@log_function(track_memory=True)
 def bienici_url(city, max_rent, minimum_area, minimum_rooms):
     # Ex: https://www.bienici.com/recherche/location/paris-75/appartement?prixMax=1200&surfaceMin=30&nbPiecesMin=2
     city_slug = city.lower().replace(" ", "-")
@@ -62,7 +64,8 @@ def bienici_url(city, max_rent, minimum_area, minimum_rooms):
         params.append(f"nbPiecesMin={minimum_rooms}")
     return url + "&".join(params)
 
-def seloger_url(city, max_rent, minimum_area, minimum_rooms):
+@log_function(track_memory=True)
+def seloger_url(city: str, max_rent: int, minimum_area: int, minimum_rooms: int) -> str:
     # https://www.seloger.com/classified-search?distributionTypes=Rent&estateTypes=Apartment&locations=AD08FR31096&numberOfBedroomsMin=1&numberOfRoomsMin=2&priceMax=1200&spaceMin=30
     codes = []
     if city.lower().startswith("paris "):
