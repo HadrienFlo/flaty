@@ -1,115 +1,57 @@
+"""
+This module defines the search input components and search logic for a Dash application using Dash Mantine Components (dmc).
+It provides UI elements for users to input search criteria for real estate ads and handles the asynchronous scraping and display of results.
+Functions:
+-----------
+- build_ad_card(ad: Ad):
+    Constructs a dmc.Card component displaying information about a real estate ad.
+- store_search(n_clicks, city, max_rent, min_area, min_rooms):
+    Dash callback. Asynchronously scrapes real estate ads from multiple sources based on user input.
+    Returns the search URLs, list of ads, and accordion state for UI updates.
+- update_search(urls, ads, accordion_state):
+    Dash callback. Updates the UI with the search URLs and the list of ads as dmc components.
+Variables:
+-----------
+- app: Dash app instance.
+- server: Flask server instance from the Dash app.
+- page_color_theme: Color theme for the page, derived from dmc default theme.
+- style: Dictionary for component styling.
+- layout: dmc.Group containing the search input fields and search button.
+Dependencies:
+-------------
+- dash, dash_mantine_components, asyncio, logging, json, dataclasses, rich
+- src.utils.logger, src.build_url, src.manager
+Note:
+-----
+- The module expects certain utility functions and classes (e.g., Ad, scrap, Ad_to_dict, load_sites) to be defined in the src package.
+- The callbacks use Dash's async capabilities for concurrent scraping.
+"""
+
 import dash
 from dash import callback, Input, State, Output, get_app
 dash._dash_renderer._set_react_version("18.2.0")
 
 import dash_mantine_components as dmc
 
-import json
-from dataclasses import dataclass
+import logging
 from rich import print
 
 import asyncio
-from pydoll.browser import Chrome
 
+from src.utils.logger import log_function
 from src.build_url import pap_url, seloger_url, bienici_url
-# from src.manager import Ad, scrap
+from src.manager import Ad, scrap, Ad_to_dict, load_sites
+
+log = logging.getLogger(__name__)
 
 
 app = get_app()
 server = app.server
 
-
 page_color_theme = dmc.DEFAULT_THEME["colors"]["blue"][6]
 style = {
     "justifyItems": "center",
 }
-
-@dataclass
-class Site:
-    name: str
-    url: str
-    search_url: str
-    ad_url_getter: str
-    ad_price_getter: str
-    ad_keyfacts_getter: str
-    ad_location_getter: str
-    ad_img_getter: str
-
-
-@dataclass
-class Ad:
-    site: Site
-    url: str
-    price: str
-    keyfacts: list[str]
-    location: str
-    img: str
-
-
-def Ad_to_dict(ad: Ad) -> dict:
-    return {
-        "site": ad.site.name,
-        "url": ad.url,
-        "price": ad.price,
-        "keyfacts": ad.keyfacts,
-        "location": ad.location,
-        "img": ad.img
-    }
-
-
-def load_sites(urls: dict[str, str]) -> list[Site]:
-    with open("src/sites.json", "r") as f:
-        data = json.load(f)
-    for item in data:
-        item["search_url"] = urls.get(item["name"], "")
-    return [Site(**item) for item in data]
-
-
-async def parse(driver, site: Site):
-    await driver.go_to(site.search_url)
-    url_list = await driver.query(site.ad_url_getter, find_all=True)
-    price_list = await driver.query(site.ad_price_getter, find_all=True)
-    keyfacts_list = await driver.query(site.ad_keyfacts_getter, find_all=True)
-    location_list = await driver.query(site.ad_location_getter, find_all=True)
-    img_list = await driver.query(site.ad_img_getter, find_all=True)
-    Ads = [
-        Ad(
-            site=site,
-            url=url.get_attribute('href'),
-            price=price.value,
-            keyfacts=keyfacts.value,
-            location=location.value,
-            img=img.get_attribute('src')
-        )
-        for url, price, keyfacts, location, img in zip(url_list, price_list, keyfacts_list, location_list, img_list)
-    ]
-    return Ads
-
-
-async def scrap(site: Site) -> list[Ad]:
-    async with Chrome() as browser:
-        print(f"Scraping {site.name} - {site.search_url}")
-        tab = await browser.start()
-        # if not site or (isinstance(site.search_url, str) and site.search_url.strip() == ""):
-        #     return []
-        await tab.go_to(site.search_url)
-        url_list = await tab.query(site.ad_url_getter, find_all=True)
-        price_list = await tab.query(site.ad_price_getter, find_all=True)
-        keyfacts_list = await tab.query(site.ad_keyfacts_getter, find_all=True)
-        location_list = await tab.query(site.ad_location_getter, find_all=True)
-        img_list = await tab.query(site.ad_img_getter, find_all=True)
-        Ads = [
-            Ad(
-                site=site,
-                url=url.get_attribute('href'),
-                price=price.text,
-                keyfacts=keyfacts.text,
-                location=location.text,
-                img=img.get_attribute('src')
-            )
-            for url, price, keyfacts, location, img in zip(url_list, price_list, keyfacts_list, location_list, img_list)
-        ]
-    return Ads
 
 
 def build_ad_card(ad: Ad):
@@ -132,7 +74,7 @@ def build_ad_card(ad: Ad):
                 mb="xs",
             ),
             dmc.Text(
-                "%s - %s" % (ad.get("keyfacts", "No keyfacts found"), ad.get("location", "No location found")),
+                "%s - %s" % (ad.get("keyfacts_children", "No keyfacts found"), ad.get("location", "No location found")),
                 size="sm",
                 c="dimmed",
             ),
@@ -185,13 +127,13 @@ async def store_search(n_clicks, city, max_rent, min_area, min_rooms):
 
     coros = [scrap(site) for site in sites[:2]]
     ads_list = await asyncio.gather(*coros)
-    print(ads_list)
+
+    log.info(f"Found {len(ad_list)} ads")
+
+    # list[Ad] -> list[dict]
     ad_list = []
     for ads in ads_list:
         ad_list.extend([Ad_to_dict(ad) for ad in ads])
-
-    for ad in ad_list:
-        print(ad)
 
     accordion_active_value = ["search_output_urls"]
 
@@ -213,8 +155,6 @@ async def store_search(n_clicks, city, max_rent, min_area, min_rooms):
 def update_search(urls, ads, accordion_state):
     if not urls and not ads:
         raise dash.exceptions.PreventUpdate
-    
-    print(f"From update_search:\nurls: {len(urls)}\nads: {len(ads)}")
 
     output_urls = dmc.Group([
         dmc.Anchor(dmc.Button(u_name, color="blue", mt="md", radius="md", variant="outline"), href=u_url, target="_blank")
