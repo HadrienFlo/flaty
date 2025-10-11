@@ -1,5 +1,5 @@
 import pytest
-from src.build_url import build_seloger_url, build_pap_url
+from src.url_factory import build_seloger_url, build_pap_url
 
 def test_build_seloger_url():
     params = {

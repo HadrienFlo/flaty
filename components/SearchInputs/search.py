@@ -38,12 +38,10 @@ from rich import print
 
 import asyncio
 
-from src.utils.logger import log_function
-from src.build_url import pap_url, seloger_url, bienici_url
-from src.manager import Ad, scrap, Ad_to_dict, load_sites
+from src.url_factory import pap_url, seloger_url, bienici_url
+from src.manager import scrap, Ad_to_dict, load_sites
 
 log = logging.getLogger(__name__)
-
 
 app = get_app()
 server = app.server
@@ -52,49 +50,6 @@ page_color_theme = dmc.DEFAULT_THEME["colors"]["blue"][6]
 style = {
     "justifyItems": "center",
 }
-
-
-def build_ad_card(ad: Ad):
-    return dmc.Card(
-        children=[
-            dmc.CardSection(
-                dmc.Image(
-                    src=ad.get("img", "https://via.placeholder.com/300x160.png?text=No+Image"),
-                    h=160,
-                    alt="Norway",
-                )
-            ),
-            dmc.Group(
-                [
-                    dmc.Text(ad.get("price", ""), fw=500),
-                    dmc.Badge(ad.get("site", ""), color="pink"),
-                ],
-                justify="space-between",
-                mt="md",
-                mb="xs",
-            ),
-            dmc.Text(
-                "%s - %s" % (ad.get("keyfacts_children", "No keyfacts found"), ad.get("location", "No location found")),
-                size="sm",
-                c="dimmed",
-            ),
-            dmc.Anchor(
-                dmc.Button(
-                    "Open Ad",
-                    color="blue",
-                    fullWidth=True,
-                    mt="md",
-                    radius="md",
-                ),
-                href=ad.get("url", "#"), target="_blank"
-            )
-        ],
-        withBorder=True,
-        shadow="sm",
-        radius="md",
-        w=350,
-    )
-
 
 @callback(
     Output("store_search_urls", "data"),

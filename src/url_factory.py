@@ -6,12 +6,11 @@ from src.utils.logger import log_function
 def leboncoin_url(city, max_rent, furnished, minimum_area, minimum_rooms):
     base = "https://www.leboncoin.fr/recherche?category=10"
     params = []
-    # Ville (remplace espaces par _ et ajoute _75000 si Paris)
     city_param = city.replace(" ", "_")
     if "paris" in city.lower():
         city_param = "Paris_75000"
     params.append(f"locations={city_param}")
-    params.append("real_estate_type=1")  # 1 = location
+    params.append("real_estate_type=1")
     if furnished.lower() in ["oui", "yes"]:
         params.append("furnished=1")
     if max_rent:
@@ -24,7 +23,6 @@ def leboncoin_url(city, max_rent, furnished, minimum_area, minimum_rooms):
 
 
 def pap_url(city, max_rent, minimum_area, minimum_rooms):
-    # Ex: https://www.pap.fr/annonce/locations-paris-75-g439-jusqu-a-1200-euros-a-partir-de-30-m2-2-pieces
     city_list = city.split(", ")
     url_left = ""
     for i, c in enumerate(city_list):
@@ -52,7 +50,6 @@ def pap_url(city, max_rent, minimum_area, minimum_rooms):
 
 @log_function(track_memory=True)
 def bienici_url(city, max_rent, minimum_area, minimum_rooms):
-    # Ex: https://www.bienici.com/recherche/location/paris-75/appartement?prixMax=1200&surfaceMin=30&nbPiecesMin=2
     city_slug = city.lower().replace(" ", "-")
     url = f"https://www.bienici.com/recherche/location/{city_slug}-75/appartement?"
     params = []
@@ -66,7 +63,6 @@ def bienici_url(city, max_rent, minimum_area, minimum_rooms):
 
 @log_function(track_memory=True)
 def seloger_url(city: str, max_rent: int, minimum_area: int, minimum_rooms: int) -> str:
-    # https://www.seloger.com/classified-search?distributionTypes=Rent&estateTypes=Apartment&locations=AD08FR31096&numberOfBedroomsMin=1&numberOfRoomsMin=2&priceMax=1200&spaceMin=30
     codes = []
     if city.lower().startswith("paris "):
         city = city.lower().replace("paris ", "").split(",")
