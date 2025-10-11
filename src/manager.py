@@ -59,6 +59,30 @@ def join_children(children_list: list[str]) -> str:
     return " ".join(children_list).replace('·', '')
 
 
+async def group_keyfacts(site: Site, keyfacts_list) -> list[str]:
+    res = []
+    for keyfacts in keyfacts_list:
+            children = await keyfacts.query(site.ad_keyfacts_children_getter, find_all=True)
+            children_text_list = []
+            for child in children:
+                child_str = await child.text
+                children_text_list.append(child_str)
+            res.append(join_children(children_text_list))
+    return res
+
+
+def check_ad_url(ad_url: str) -> bool:
+    if ad_url and ad_url.startswith("http"):
+        return True
+    return False
+
+
+def update_ad_url(ad_url: str, site: Site) -> str:
+    if not check_ad_url(ad_url):
+        return site.url + ad_url
+    return ad_url
+
+
 @log_function(track_memory=True)
 async def scrap(site: Site) -> list[Ad]:
     async with Chrome() as browser:
@@ -68,21 +92,14 @@ async def scrap(site: Site) -> list[Ad]:
         url_list = await tab.query(site.ad_url_getter, find_all=True)
         price_list = await tab.query(site.ad_price_getter, find_all=True)
         keyfacts_list = await tab.query(site.ad_keyfacts_getter, find_all=True)
-        keyfacts_children_list = []
+        keyfacts_children_list = await group_keyfacts(site, keyfacts_list)
         location_list = await tab.query(site.ad_location_getter, find_all=True)
         img_list = await tab.query(site.ad_img_getter, find_all=True)
-        for keyfacts in keyfacts_list:
-            children = await keyfacts.query(site.ad_keyfacts_children_getter, find_all=True)
-            children_text_list = []
-            for child in children:
-                child_str = await child.text
-                children_text_list.append(child_str)
-            keyfacts_children_list.append(join_children(children_text_list))
         Ads = []
         for url, price, keyfacts, keyfacts_children, location, img in zip(url_list, price_list, keyfacts_list, keyfacts_children_list, location_list, img_list):
             ad = Ad(
                 site=site,
-                url=url.get_attribute('href'),
+                url=update_ad_url(url.get_attribute('href'), site),
                 price=await price.text,
                 keyfacts=await keyfacts.text,
                 keyfacts_children=keyfacts_children,

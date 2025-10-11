@@ -11,7 +11,7 @@
     },
     {
         "name": "PAP",
-        "url": "https://www.pap.fr/annonce/",
+        "url": "https://www.pap.fr/",
         "ad_url_getter": "//a[@class='item-thumb-link']",
         "ad_price_getter": "//span[@class='item-price' or @class='item-price txt-purple']",
         "ad_keyfacts_getter": "//ul[@class='item-tags']",

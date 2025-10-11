@@ -38,6 +38,7 @@ from rich import print
 
 import asyncio
 
+from components.SearchInputs.build_ad_card import build_ad_card
 from src.url_factory import pap_url, seloger_url, bienici_url
 from src.manager import scrap, Ad_to_dict, load_sites
 
@@ -83,7 +84,7 @@ async def store_search(n_clicks, city, max_rent, min_area, min_rooms):
     coros = [scrap(site) for site in sites[:2]]
     ads_list = await asyncio.gather(*coros)
 
-    log.info(f"Found {len(ad_list)} ads")
+    log.info(f"Found {len(ads_list)} ads")
 
     # list[Ad] -> list[dict]
     ad_list = []
