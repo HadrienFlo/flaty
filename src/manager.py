@@ -25,6 +25,7 @@ class Site:
 
 @dataclass
 class Ad:
+    id: int
     site: Site
     url: str
     price: str
@@ -36,6 +37,7 @@ class Ad:
 
 def Ad_to_dict(ad: Ad) -> dict:
     return {
+        "id": hash(ad.url),
         "site": ad.site.name,
         "url": ad.url,
         "price": ad.price,
@@ -97,15 +99,22 @@ async def scrap(site: Site) -> list[Ad]:
         img_list = await tab.query(site.ad_img_getter, find_all=True)
         Ads = []
         for url, price, keyfacts, keyfacts_children, location, img in zip(url_list, price_list, keyfacts_list, keyfacts_children_list, location_list, img_list):
+            ad_url = update_ad_url(url.get_attribute('href'), site)
+            price = await price.text
+            keyfacts = await keyfacts.text
+            keyfacts_children = keyfacts_children
+            location = await location.text
+            img = img.get_attribute('src')
             ad = Ad(
-                site=site,
-                url=update_ad_url(url.get_attribute('href'), site),
-                price=await price.text,
-                keyfacts=await keyfacts.text,
-                keyfacts_children=keyfacts_children,
-                location=await location.text,
-                img=img.get_attribute('src')
+                id = hash(ad_url),
+                site = site,
+                url = ad_url,
+                price = price,
+                keyfacts = keyfacts,
+                keyfacts_children = keyfacts_children,
+                location = location,
+                img = img
             )
             Ads.append(ad)
-        log.info(f"Scraped {len(Ads)} ads from {site.name}")
+        log.info(f"Got {len(Ads)} ads from {site.name}")
     return Ads

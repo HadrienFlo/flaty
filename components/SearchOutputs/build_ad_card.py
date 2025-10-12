@@ -1,10 +1,8 @@
 import dash_mantine_components as dmc
 
 from src.manager import Ad
-from src.utils.logger import log_function
 
 
-@log_function(track_memory=True)
 def build_ad_card(ad: Ad):
     return dmc.Card(
         children=[
@@ -29,16 +27,25 @@ def build_ad_card(ad: Ad):
                 size="sm",
                 c="dimmed",
             ),
-            dmc.Anchor(
-                dmc.Button(
-                    "Open Ad",
-                    color="blue",
-                    fullWidth=True,
-                    mt="md",
-                    radius="md",
+            dmc.Flex([
+                dmc.Anchor(
+                    dmc.Button(
+                        "Open",
+                        color="blue",
+                        size="sm",
+                        radius="md",
+                    ),
+                    href=ad.get("url", "#"), target="_blank"
                 ),
-                href=ad.get("url", "#"), target="_blank"
-            )
+                dmc.Chip(
+                    "Save",
+                    id=f"save_ad_{ad.get('id', '')}",
+                    color="blue",
+                    size="sm",
+                    radius="lg",
+                    variant="light",
+                ),
+            ], gap="md", justify="space-between", align="center", mt="md"),
         ],
         withBorder=True,
         shadow="sm",

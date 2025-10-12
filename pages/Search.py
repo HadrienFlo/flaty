@@ -4,7 +4,9 @@ dash._dash_renderer._set_react_version("18.2.0")
 
 import dash_mantine_components as dmc
 
-from components.SearchInputs.search import layout as search_inputs_layout
+from components.SearchInputs.search_input import layout as search_inputs_layout
+from components.SearchOutputs.ads_output import layout as search_outputs_ads_layout
+from components.SearchOutputs.urls_output import layout as search_outputs_urls_layout
 
 app = get_app()
 
@@ -16,7 +18,13 @@ page_color_theme = dmc.DEFAULT_THEME["colors"]["blue"][6]
 
 
 layout = dmc.Stack([
+    # search stores
+    dcc.Store(id='store_search_urls', storage_type="session"),
+    dcc.Store(id='store_search_ads', storage_type="session"),
+    dcc.Store(id='store_search_accordion_state', storage_type="session"),
+    # search inputs
     search_inputs_layout,
+    #search outputs
     dmc.Divider(color=page_color_theme),
     dmc.Group([
         dmc.LoadingOverlay(
@@ -29,6 +37,7 @@ layout = dmc.Stack([
             id="search_output_accordion",
             multiple=True,
             persistence=True,
+            persistence_type="session",
             children=[
                 dmc.AccordionItem(
                     [
@@ -39,7 +48,7 @@ layout = dmc.Stack([
                             ])
                         ),
                         dmc.AccordionPanel(
-                            dmc.Group(id="search_output_urls"),
+                            search_outputs_urls_layout,
                         ),
                     ],
                     value="search_output_urls",
@@ -53,7 +62,7 @@ layout = dmc.Stack([
                             ])
                         ),
                         dmc.AccordionPanel(
-                            dmc.Group(id="search_output_ads"),
+                            search_outputs_ads_layout,
                         ),
                     ],
                     value="search_output_ads",
@@ -65,7 +74,4 @@ layout = dmc.Stack([
             style={"width": "100%"},
         ),
     ]),
-    dcc.Store(id='store_search_urls', storage_type="session"),
-    dcc.Store(id='store_search_ads', storage_type="session"),
-    dcc.Store(id='store_search_accordion_state', storage_type="session")
 ], gap="lg", style={"padding": 20})

@@ -1,11 +1,9 @@
 import dash
-from dash import callback, Input, State, Output, get_app
+from dash import get_app
 dash._dash_renderer._set_react_version("18.2.0")
 
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 
-from components.SearchInputs.search import build_ad_card
 
 app = get_app()
 
