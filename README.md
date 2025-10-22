@@ -33,13 +33,26 @@ flaty/
 ├── assets/           # Ressources statiques (images, css, etc.)
 ├── components/       # Composants réutilisables
 │   ├── SearchInputs/    # Composants pour la recherche
+│   │   └── search.py        # Logique de recherche
+│   ├── SearchOutputs/   # Composants pour l'affichage des résultats
+│   │   ├── search.py        # Affichage des résultats
+│   │   └── urls_output.py   # Affichage des URLs de recherche
 │   └── SitesManager/    # Gestion des sites d'annonces
 ├── pages/           # Pages de l'application
+│   └── Search.py        # Page principale de recherche
 ├── src/            # Code source principal
-│   ├── build_url.py     # Construction des URLs
-│   └── constants.py     # Constantes
+│   ├── utils/          # Utilitaires
+│   │   └── logger.py       # Système de logging personnalisé
+│   ├── url_factory.py  # Construction des URLs
+│   ├── manager.py      # Gestion des annonces et sites
+│   ├── constants.py    # Constantes
+│   └── sites.json      # Configuration des sites
 ├── tests/          # Tests unitaires
+│   └── test_build_url.py  # Tests des URLs
+├── logs/           # Fichiers de logs (généré automatiquement)
 ├── flaty.py        # Point d'entrée de l'application
+├── setup.py        # Configuration du package
+├── pyproject.toml  # Configuration des outils
 └── requirements.txt # Dépendances du projet
 ```
 
