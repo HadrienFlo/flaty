@@ -26,6 +26,7 @@ app = Dash(
     use_pages=True,
     title="Flaty",
 )
+server = app.server
 
 theme_toggle = dmc.Switch(
     offLabel=DashIconify(
