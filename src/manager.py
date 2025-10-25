@@ -1,7 +1,6 @@
 import json
 import logging
 from dataclasses import dataclass
-from rich import print
 
 import asyncio
 from pydoll.browser import Chrome
