@@ -34,3 +34,13 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+*.sqlite
+
+# Freeze
+*.freeze
+freeze.txt
